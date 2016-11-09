@@ -1,0 +1,24 @@
+{
+  "name": "trooba-http-api",
+  "version": "1.0.0",
+  "description": "generic API for trooba http and ajax transports",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dimichgh/trooba-http-api.git"
+  },
+  "keywords": [
+    "ajax",
+    "http",
+    "api"
+  ],
+  "author": "Dmytro Semenov <dimichsdg@yahoo.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dimichgh/trooba-http-api/issues"
+  },
+  "homepage": "https://github.com/dimichgh/trooba-http-api#readme"
+}
