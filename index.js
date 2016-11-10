@@ -32,13 +32,13 @@ var proto = Client.prototype;
  * @callback is optional
  */
 proto.request = function request(options, Ctor) {
+    this.requestContext.options = this.requestContext.options || {};
     Utils.mixin(options, {
-        headers: {},
-        mvheaders: {}
+        headers: {}
     }, this.requestContext.options);
 
     Ctor = Ctor || Request;
-    return new Ctor(this.requestContext);
+    return new Ctor(this.requestContext, this.responseContext);
 };
 
 /**
@@ -56,53 +56,40 @@ proto.get = function get(qsParams) {
 
 /**
  * POST request
- * @param postParams
- *  {
- *      body: 'post request body'
- *      qs: {query parameter if any}
- *      path: 'path to target'
- *  }
- * @callback is optional
+ * @param 'request body'
  */
 proto.post = function post(postParams) {
-    postParams.method = 'POST';
-    return this.request(postParams);
+    return this.request({
+        method: 'POST',
+        body: postParams
+    });
 };
 
 /**
  * PUT request
- * @param putParams
- *  {
- *      body: 'put request body'
- *      qs: {query parameter if any}
- *      path: 'path to target'
- *  }
- * @callback is optional
+ * @param 'request body'
  */
 proto.put = function put(putParams) {
-    putParams.method = 'PUT';
-    return this.request(putParams);
+    return this.request({
+        method: 'PUT',
+        body: putParams
+    });
 };
 
 /**
  * PATCH request
- * @param patchParams
- *  {
- *      body: 'put request body'
- *      qs: {query parameter if any}
- *      path: 'path to target'
- *  }
- * @callback is optional
+ * @param 'request body'
  */
 proto.patch = function patch(patchParams) {
-  patchParams.method = 'PATCH';
-  return this.request(patchParams);
+    return this.request({
+        method: 'PATCH',
+        body: patchParams
+    });
 };
 
 /**
  * DETELE request
  * @param path: 'path to target'
- * @callback is optional
  */
 proto.delete = function _delete(path) {
     return this.request({
@@ -111,8 +98,9 @@ proto.delete = function _delete(path) {
     });
 };
 
-function Request(requestContext) {
+function Request(requestContext, responseContext) {
     this.requestContext = requestContext;
+    this.responseContext = responseContext;
 }
 
 module.exports.Request = Request;
@@ -120,6 +108,7 @@ module.exports.Request = Request;
 Request.prototype = {
 
     options: function options(opts) {
+        Utils.mixin(this.requestContext.options.headers, opts.headers);
         Utils.mixin(opts, this.requestContext.options);
         return this;
     },
@@ -151,7 +140,7 @@ Request.prototype = {
         ctx.options.headers =
             Utils.stringifyHeaders(ctx.options.headers);
 
-        ctx.exec(callback);
+        this.requestContext.next(callback);
     }
 
 };
