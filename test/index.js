@@ -102,9 +102,7 @@ describe(__filename, function () {
             return httpfy(function (requestContext, responseContext) {
                 Assert.deepEqual({
                     method: 'GET',
-                    qs: {
-                        foo: 'bar',
-                    },
+                    search: 'foo=bar',
                     headers: {}
                 }, requestContext.options);
 
@@ -246,4 +244,87 @@ describe(__filename, function () {
         });
     });
 
+    it('should do get, query object, headers, path, mixing', function (done) {
+        function factory() {
+            return httpfy(function (requestContext, responseContext) {
+                Assert.deepEqual({
+                    method: 'GET',
+                    path: '/path/at/one',
+                    search: 'b-foo=azs',
+                    'o-cvb': 'azx',
+                    'o-foo': 'asd',
+                    headers: {
+                        'h-bar': 'wsx',
+                        'h-foo': 'qaz',
+                        'h-krv': 'vbn'
+                    }
+                }, requestContext.options);
+
+                responseContext.next(null, {
+                    qaz: 'wer'
+                });
+            });
+        }
+
+        var client = Trooba.transport(factory).create();
+
+        client.get({
+            'b-foo': 'azs'
+        })
+        .set('h-foo', 'qaz')
+        .set('h-bar', 'wsx')
+        .path('/path/:to/:resource', {to:'at',resource:'one'})
+        .options({
+            'o-foo': 'asd',
+            'o-cvb': 'azx',
+            headers: {
+                'h-krv': 'vbn'
+            }
+        })
+        .end(function (err, res) {
+            Assert.deepEqual({qaz: 'wer'}, res);
+            done();
+        });
+    });
+
+    it('should do get, query object, headers, path, mixing', function (done) {
+        function factory() {
+            return httpfy(function (requestContext, responseContext) {
+                Assert.deepEqual({
+                    method: 'GET',
+                    path: '/path/at/one',
+                    search: 'b-foo=azs',
+                    'o-cvb': 'azx',
+                    'o-foo': 'asd',
+                    headers: {
+                        'h-bar': 'wsx',
+                        'h-foo': 'qaz',
+                        'h-krv': 'vbn'
+                    }
+                }, requestContext.options);
+
+                responseContext.next(null, {
+                    qaz: 'wer'
+                });
+            });
+        }
+
+        var client = Trooba.transport(factory).create();
+
+        client.get('b-foo=azs')
+        .set('h-foo', 'qaz')
+        .set('h-bar', 'wsx')
+        .path('/path/:to/:resource', {to:'at',resource:'one'})
+        .options({
+            'o-foo': 'asd',
+            'o-cvb': 'azx',
+            headers: {
+                'h-krv': 'vbn'
+            }
+        })
+        .end(function (err, res) {
+            Assert.deepEqual({qaz: 'wer'}, res);
+            done();
+        });
+    });
 });

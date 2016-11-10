@@ -1,5 +1,6 @@
 'use strict';
 
+var Querystring = require('querystring');
 var template = require('underscore').template;
 
 var colonTemplateSettings = {
@@ -50,7 +51,10 @@ proto.get = function get(qsParams) {
     var options = {
         method: 'GET'
     };
-    qsParams && (options.qs = qsParams);
+    if (qsParams && typeof qsParams === 'object') {
+        qsParams = Querystring.stringify(qsParams);
+    }
+    qsParams && (options.search = qsParams);
     return this.request(options);
 };
 
