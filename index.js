@@ -175,5 +175,9 @@ var Utils = {
             }
             return memo;
         }, headers);
-    }
+    },
+
+    stringifyQuery: Queryparam.stringify
 };
+
+module.exports.Utils = Utils;
