@@ -33,10 +33,10 @@ var proto = Client.prototype;
  * @callback is optional
  */
 proto.request = function request(options, Ctor) {
-    this.requestContext.options = this.requestContext.options || {};
+    this.requestContext.request = this.requestContext.request || {};
     Utils.mixin(options, {
         headers: {}
-    }, this.requestContext.options);
+    }, this.requestContext.request);
 
     Ctor = Ctor || Request;
     return new Ctor(this.requestContext, this.responseContext);
@@ -112,17 +112,17 @@ module.exports.Request = Request;
 Request.prototype = {
 
     options: function options(opts) {
-        Utils.mixin(this.requestContext.options.headers, opts.headers);
-        Utils.mixin(opts, this.requestContext.options);
+        Utils.mixin(this.requestContext.request.headers, opts.headers);
+        Utils.mixin(opts, this.requestContext.request);
         return this;
     },
 
     path: function path(pathValue, pathParams) {
         if (!pathParams) {
-            this.requestContext.options.path = pathValue;
+            this.requestContext.request.path = pathValue;
         } else {
             var createPath = template(pathValue, colonTemplateSettings);
-            this.requestContext.options.path = createPath(pathParams);
+            this.requestContext.request.path = createPath(pathParams);
         }
         return this;
     },
@@ -134,15 +134,15 @@ Request.prototype = {
      *  - set(name, value) - for simaple headers
     */
     set: function set(key, value) {
-        this.requestContext.options.headers[key] = value;
+        this.requestContext.request.headers[key] = value;
         return this;
     },
 
     end: function end(callback) {
         var ctx = this.requestContext;
         // stringify some headers
-        ctx.options.headers =
-            Utils.stringifyHeaders(ctx.options.headers);
+        ctx.request.headers =
+            Utils.stringifyHeaders(ctx.request.headers);
 
         this.requestContext.next(callback);
     }

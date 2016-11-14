@@ -43,7 +43,7 @@ describe(__filename, function () {
                 Assert.deepEqual({
                     foo: 'bar',
                     headers: {}
-                }, requestContext.options);
+                }, requestContext.request);
 
                 responseContext.next(null, {
                     qaz: 'wer'
@@ -67,7 +67,7 @@ describe(__filename, function () {
                 Assert.deepEqual({
                     foo: 'bar',
                     headers: {}
-                }, requestContext.options);
+                }, requestContext.request);
 
                 responseContext.next(null, {
                     qaz: 'wer'
@@ -104,7 +104,7 @@ describe(__filename, function () {
                     method: 'GET',
                     search: 'foo=bar',
                     headers: {}
-                }, requestContext.options);
+                }, requestContext.request);
 
                 responseContext.next(null, {
                     qaz: 'wer'
@@ -131,7 +131,7 @@ describe(__filename, function () {
                         foo: 'bar',
                     },
                     headers: {}
-                }, requestContext.options);
+                }, requestContext.request);
 
                 responseContext.next(null, {
                     qaz: 'wer'
@@ -158,7 +158,7 @@ describe(__filename, function () {
                         foo: 'bar',
                     },
                     headers: {}
-                }, requestContext.options);
+                }, requestContext.request);
 
                 responseContext.next(null, {
                     qaz: 'wer'
@@ -183,7 +183,7 @@ describe(__filename, function () {
                     method: 'DELETE',
                     path: '/path/to/resource',
                     headers: {}
-                }, requestContext.options);
+                }, requestContext.request);
 
                 responseContext.next(null, {
                     qaz: 'wer'
@@ -215,7 +215,7 @@ describe(__filename, function () {
                         'h-foo': 'qaz',
                         'h-krv': 'vbn'
                     }
-                }, requestContext.options);
+                }, requestContext.request);
 
                 responseContext.next(null, {
                     qaz: 'wer'
@@ -258,7 +258,7 @@ describe(__filename, function () {
                         'h-foo': 'qaz',
                         'h-krv': 'vbn'
                     }
-                }, requestContext.options);
+                }, requestContext.request);
 
                 responseContext.next(null, {
                     qaz: 'wer'
@@ -301,7 +301,7 @@ describe(__filename, function () {
                         'h-foo': 'qaz',
                         'h-krv': 'vbn'
                     }
-                }, requestContext.options);
+                }, requestContext.request);
 
                 responseContext.next(null, {
                     qaz: 'wer'
