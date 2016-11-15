@@ -21,16 +21,20 @@ describe(__filename, function () {
 
     it('should allow extended client contructor', function (done) {
 
-        function CustomClient(requestContext, responseContext) {
-            Assert.equal('quest', requestContext.req);
-            Assert.equal('ponse', responseContext.res);
-            done();
+        function CustomClient(pipe) {
+            return pipe(function ctx(requestContext, responseContext) {
+                Assert.equal('quest', requestContext.req);
+                Assert.equal('ponse', responseContext.res);
+                done();
+            });
         }
         var factory = httpfy({}, CustomClient);
-        var client = factory.api({
-            req: 'quest'
-        }, {
-            res: 'ponse'
+        var client = factory.api(function pipe(callback) {
+            callback({
+                req: 'quest'
+            }, {
+                res: 'ponse'
+            });
         });
 
         client.get();

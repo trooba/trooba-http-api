@@ -11,16 +11,15 @@ module.exports = function httpfy(transport, Ctor) {
     // allow extending client API
     Ctor = Ctor || Client;
 
-    transport.api = function api(requestContext, responseContext) {
-        return new Ctor(requestContext, responseContext);
+    transport.api = function api(pipe) {
+        return new Ctor(pipe);
     };
 
     return transport;
 };
 
-function Client(requestContext, responseContext) {
-    this.requestContext = requestContext;
-    this.responseContext = responseContext;
+function Client(pipe) {
+    this.pipe = pipe;
 }
 
 module.exports.Client = Client;
@@ -32,12 +31,9 @@ var proto = Client.prototype;
  * @param options
  */
 proto.request = function request(request, Ctor) {
-    this.requestContext.request = request || this.requestContext.request || {};
-    this.requestContext.request.headers = this.requestContext.request.headers || {};
-    Utils.mixin(request, this.requestContext.request);
-
+    request.headers = request.headers || {};
     Ctor = Ctor || Request;
-    return new Ctor(this.requestContext, this.responseContext);
+    return new Ctor(request, this.pipe);
 };
 
 /**
@@ -99,9 +95,9 @@ proto.delete = function _delete(path) {
     });
 };
 
-function Request(requestContext, responseContext) {
-    this.requestContext = requestContext;
-    this.responseContext = responseContext;
+function Request(request, pipe) {
+    this.request = request;
+    this.pipe = pipe;
 }
 
 module.exports.Request = Request;
@@ -109,17 +105,17 @@ module.exports.Request = Request;
 Request.prototype = {
 
     options: function options(opts) {
-        Utils.mixin(this.requestContext.request.headers, opts.headers);
-        Utils.mixin(opts, this.requestContext.request);
+        Utils.mixin(this.request.headers, opts.headers);
+        Utils.mixin(opts, this.request);
         return this;
     },
 
     path: function path(pathValue, pathParams) {
         if (!pathParams) {
-            this.requestContext.request.path = pathValue;
+            this.request.path = pathValue;
         } else {
             var createPath = template(pathValue, colonTemplateSettings);
-            this.requestContext.request.path = createPath(pathParams);
+            this.request.path = createPath(pathParams);
         }
         return this;
     },
@@ -131,19 +127,24 @@ Request.prototype = {
      *  - set(name, value) - for simaple headers
     */
     set: function set(key, value) {
-        this.requestContext.request.headers[key] = value;
+        this.request.headers[key] = value;
         return this;
     },
 
     end: function end(callback) {
-        var ctx = this.requestContext;
-        // stringify some headers
-        ctx.request.headers =
-            Utils.stringifyHeaders(ctx.request.headers);
+        var request = this.request;
+        this.pipe(function ctx(requestContext) {
+            requestContext.request = request || requestContext.request || {};
+            requestContext.request.headers = requestContext.request.headers || {};
+            Utils.mixin(request, requestContext.request);
 
-        ctx.next(callback);
+            // stringify some headers
+            requestContext.request.headers =
+                Utils.stringifyHeaders(requestContext.request.headers);
+
+            requestContext.next(callback);
+        });
     }
-
 };
 
 var Utils = {
