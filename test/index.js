@@ -40,7 +40,7 @@ describe(__filename, function () {
         client.get();
     });
 
-    it('should do request', function (done) {
+    it('should do request and expose runtime context', function (done) {
 
         function factory() {
             return httpfy(function (requestContext, responseContext) {
@@ -57,12 +57,15 @@ describe(__filename, function () {
 
         var client = Trooba.transport(factory).create();
 
-        client.request({
+        var ctx = client.request({
             foo: 'bar'
         }).end(function (err, res) {
             Assert.deepEqual({qaz: 'wer'}, res);
             done();
         });
+
+        Assert.ok(ctx.requestContext);
+        Assert.ok(ctx.responseContext);
     });
 
     it('should allow request override', function (done) {

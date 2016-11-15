@@ -133,7 +133,7 @@ Request.prototype = {
 
     end: function end(callback) {
         var request = this.request;
-        this.pipe(function ctx(requestContext) {
+        return this.pipe(function ctx(requestContext) {
             requestContext.request = request || requestContext.request || {};
             requestContext.request.headers = requestContext.request.headers || {};
             Utils.mixin(request, requestContext.request);
