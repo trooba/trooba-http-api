@@ -30,13 +30,11 @@ var proto = Client.prototype;
 /**
  * General request
  * @param options
- * @callback is optional
  */
-proto.request = function request(options, Ctor) {
-    this.requestContext.request = this.requestContext.request || {};
-    Utils.mixin(options, {
-        headers: {}
-    }, this.requestContext.request);
+proto.request = function request(request, Ctor) {
+    this.requestContext.request = request || this.requestContext.request || {};
+    this.requestContext.request.headers = this.requestContext.request.headers || {};
+    Utils.mixin(request, this.requestContext.request);
 
     Ctor = Ctor || Request;
     return new Ctor(this.requestContext, this.responseContext);
@@ -45,7 +43,6 @@ proto.request = function request(options, Ctor) {
 /**
  * GET request
  * @param params is query string in json or string format
- * @callback is optional
  */
 proto.get = function get(qsParams) {
     var options = {
@@ -144,7 +141,7 @@ Request.prototype = {
         ctx.request.headers =
             Utils.stringifyHeaders(ctx.request.headers);
 
-        this.requestContext.next(callback);
+        ctx.next(callback);
     }
 
 };

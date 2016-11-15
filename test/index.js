@@ -327,4 +327,50 @@ describe(__filename, function () {
             done();
         });
     });
+
+    it('should do get, query object, headers, path, mixing', function (done) {
+        function factory() {
+            return httpfy(function (requestContext, responseContext) {
+                Assert.deepEqual({
+                    method: 'GET',
+                    path: '/path/at/one',
+                    'o-cvb': 'azx',
+                    'o-foo': 'asd',
+                    headers: {
+                        'h-bar': 'wsx',
+                        'h-foo': 'qaz',
+                        'h-krv': 'vbn',
+                        'r-foo': 'bar'
+                    }
+                }, requestContext.request);
+
+                responseContext.next(null, {
+                    qaz: 'wer'
+                });
+            });
+        }
+
+        var client = Trooba.transport(factory).create();
+
+        client.request({
+            headers: {
+                'r-foo': 'bar'
+            }
+        })
+        .set('h-foo', 'qaz')
+        .set('h-bar', 'wsx')
+        .path('/path/:to/:resource', {to:'at',resource:'one'})
+        .options({
+            method: 'GET',
+            'o-foo': 'asd',
+            'o-cvb': 'azx',
+            headers: {
+                'h-krv': 'vbn'
+            }
+        })
+        .end(function (err, res) {
+            Assert.deepEqual({qaz: 'wer'}, res);
+            done();
+        });
+    });
 });
