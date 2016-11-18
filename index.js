@@ -133,16 +133,17 @@ Request.prototype = {
 
     end: function end(callback) {
         var request = this.request;
-        return this.pipe(function ctx(requestContext) {
-            requestContext.request = request || requestContext.request || {};
+        return this.pipe(function ctx(requestContext, next) {
+            requestContext.request = request;
             requestContext.request.headers = requestContext.request.headers || {};
-            Utils.mixin(request, requestContext.request);
 
             // stringify some headers
             requestContext.request.headers =
                 Utils.stringifyHeaders(requestContext.request.headers);
 
-            requestContext.next(callback);
+            next(function onResponseContext(responseContext) {
+                callback(responseContext.error, responseContext.response);
+            });
         });
     }
 };

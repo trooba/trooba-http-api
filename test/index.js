@@ -22,19 +22,16 @@ describe(__filename, function () {
     it('should allow extended client contructor', function (done) {
 
         function CustomClient(pipe) {
-            return pipe(function ctx(requestContext, responseContext) {
+            return pipe(function ctx(requestContext, next) {
                 Assert.equal('quest', requestContext.req);
-                Assert.equal('ponse', responseContext.res);
-                done();
+                next();
             });
         }
         var factory = httpfy({}, CustomClient);
         var client = factory.api(function pipe(callback) {
             callback({
                 req: 'quest'
-            }, {
-                res: 'ponse'
-            });
+            }, done);
         });
 
         client.get();
@@ -43,13 +40,13 @@ describe(__filename, function () {
     it('should do request and expose runtime context', function (done) {
 
         function factory() {
-            return httpfy(function (requestContext, responseContext) {
+            return httpfy(function (requestContext, reply) {
                 Assert.deepEqual({
                     foo: 'bar',
                     headers: {}
                 }, requestContext.request);
 
-                responseContext.next(null, {
+                reply(null, {
                     qaz: 'wer'
                 });
             });
@@ -64,19 +61,18 @@ describe(__filename, function () {
             done();
         });
 
-        Assert.ok(ctx.requestContext);
-        Assert.ok(ctx.responseContext);
+        Assert.ok(ctx.request);
     });
 
     it('should allow request override', function (done) {
         function factory() {
-            return httpfy(function (requestContext, responseContext) {
+            return httpfy(function (requestContext, reply) {
                 Assert.deepEqual({
                     foo: 'bar',
                     headers: {}
                 }, requestContext.request);
 
-                responseContext.next(null, {
+                reply(null, {
                     qaz: 'wer'
                 });
             });
@@ -106,14 +102,14 @@ describe(__filename, function () {
     it('should do get', function (done) {
 
         function factory() {
-            return httpfy(function (requestContext, responseContext) {
+            return httpfy(function (requestContext, reply) {
                 Assert.deepEqual({
                     method: 'GET',
                     search: 'foo=bar',
                     headers: {}
                 }, requestContext.request);
 
-                responseContext.next(null, {
+                reply(null, {
                     qaz: 'wer'
                 });
             });
@@ -131,7 +127,7 @@ describe(__filename, function () {
 
     it('should do put', function (done) {
         function factory() {
-            return httpfy(function (requestContext, responseContext) {
+            return httpfy(function (requestContext, reply) {
                 Assert.deepEqual({
                     method: 'PUT',
                     body: {
@@ -140,7 +136,7 @@ describe(__filename, function () {
                     headers: {}
                 }, requestContext.request);
 
-                responseContext.next(null, {
+                reply(null, {
                     qaz: 'wer'
                 });
             });
@@ -158,7 +154,7 @@ describe(__filename, function () {
 
     it('should do patch', function (done) {
         function factory() {
-            return httpfy(function (requestContext, responseContext) {
+            return httpfy(function (requestContext, reply) {
                 Assert.deepEqual({
                     method: 'PATCH',
                     body: {
@@ -167,7 +163,7 @@ describe(__filename, function () {
                     headers: {}
                 }, requestContext.request);
 
-                responseContext.next(null, {
+                reply(null, {
                     qaz: 'wer'
                 });
             });
@@ -185,14 +181,14 @@ describe(__filename, function () {
 
     it('should do delete', function (done) {
         function factory() {
-            return httpfy(function (requestContext, responseContext) {
+            return httpfy(function (requestContext, reply) {
                 Assert.deepEqual({
                     method: 'DELETE',
                     path: '/path/to/resource',
                     headers: {}
                 }, requestContext.request);
 
-                responseContext.next(null, {
+                reply(null, {
                     qaz: 'wer'
                 });
             });
@@ -208,7 +204,7 @@ describe(__filename, function () {
 
     it('should do post, headers, path, mixing', function (done) {
         function factory() {
-            return httpfy(function (requestContext, responseContext) {
+            return httpfy(function (requestContext, reply) {
                 Assert.deepEqual({
                     method: 'POST',
                     path: '/path/at/one',
@@ -224,7 +220,7 @@ describe(__filename, function () {
                     }
                 }, requestContext.request);
 
-                responseContext.next(null, {
+                reply(null, {
                     qaz: 'wer'
                 });
             });
@@ -253,7 +249,7 @@ describe(__filename, function () {
 
     it('should do get, query object, headers, path, mixing', function (done) {
         function factory() {
-            return httpfy(function (requestContext, responseContext) {
+            return httpfy(function (requestContext, reply) {
                 Assert.deepEqual({
                     method: 'GET',
                     path: '/path/at/one',
@@ -267,7 +263,7 @@ describe(__filename, function () {
                     }
                 }, requestContext.request);
 
-                responseContext.next(null, {
+                reply(null, {
                     qaz: 'wer'
                 });
             });
@@ -296,7 +292,7 @@ describe(__filename, function () {
 
     it('should do get, query object, headers, path, mixing', function (done) {
         function factory() {
-            return httpfy(function (requestContext, responseContext) {
+            return httpfy(function (requestContext, reply) {
                 Assert.deepEqual({
                     method: 'GET',
                     path: '/path/at/one',
@@ -310,7 +306,7 @@ describe(__filename, function () {
                     }
                 }, requestContext.request);
 
-                responseContext.next(null, {
+                reply(null, {
                     qaz: 'wer'
                 });
             });
@@ -337,7 +333,7 @@ describe(__filename, function () {
 
     it('should do get, query object, headers, path, mixing', function (done) {
         function factory() {
-            return httpfy(function (requestContext, responseContext) {
+            return httpfy(function (requestContext, reply) {
                 Assert.deepEqual({
                     method: 'GET',
                     path: '/path/at/one',
@@ -351,7 +347,7 @@ describe(__filename, function () {
                     }
                 }, requestContext.request);
 
-                responseContext.next(null, {
+                reply(null, {
                     qaz: 'wer'
                 });
             });
