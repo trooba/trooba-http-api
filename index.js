@@ -105,8 +105,11 @@ module.exports.Request = Request;
 Request.prototype = {
 
     options: function options(opts) {
-        Utils.mixin(this.request.headers, opts.headers);
-        Utils.mixin(opts, this.request);
+        if (opts) {
+            opts.headers = opts.headers || {};
+            Utils.mixin(this.request.headers, opts.headers);
+            Utils.mixin(opts, this.request);
+        }
         return this;
     },
 
