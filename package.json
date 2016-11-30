@@ -23,7 +23,7 @@
   "homepage": "https://github.com/dimichgh/trooba-http-api#readme",
   "devDependencies": {
     "mocha": "^3.1.2",
-    "trooba": "file:../trooba"
+    "trooba": "^0"
   },
   "dependencies": {
     "underscore": "^1.8.3"
