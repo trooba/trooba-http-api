@@ -135,18 +135,16 @@ Request.prototype = {
     },
 
     end: function end(callback) {
-        var request = this.request;
-        return this.pipe(function ctx(requestContext, next) {
-            requestContext.request = request;
-            requestContext.request.headers = requestContext.request.headers || {};
+        var requestContext = {};
+        requestContext.request = this.request;
+        requestContext.request.headers = requestContext.request.headers || {};
 
-            // stringify some headers
-            requestContext.request.headers =
-                Utils.stringifyHeaders(requestContext.request.headers);
+        // stringify some headers
+        requestContext.request.headers =
+            Utils.stringifyHeaders(requestContext.request.headers);
 
-            next(function onResponseContext(responseContext) {
-                callback(responseContext.error, responseContext.response);
-            });
+        return this.pipe(requestContext, function onResponseContext(responseContext) {
+            callback(responseContext.error, responseContext.response);
         });
     }
 };
