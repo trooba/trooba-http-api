@@ -1,6 +1,6 @@
 {
   "name": "trooba-http-api",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "generic API for trooba http and ajax transports",
   "main": "index.js",
   "scripts": {
