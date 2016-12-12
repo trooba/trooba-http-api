@@ -4,13 +4,12 @@ var Assert = require('assert');
 var NodeUtils = require('util');
 var Trooba = require('trooba');
 var httpfy = require('..');
+var Client = httpfy.Client;
 var Request = httpfy.Request;
 
 describe(__filename, function () {
-    it('should instrument transport object', function () {
-        var factory = httpfy({});
-        Assert.ok(factory.api);
-        var client = factory.api();
+    it('should inject api', function () {
+        var client = Trooba.use(httpfy).build('client:default');
         Assert.ok(client.get);
         Assert.ok(client.post);
         Assert.ok(client.put);
@@ -20,65 +19,58 @@ describe(__filename, function () {
     });
 
     it('should allow extended client contructor', function (done) {
-
-        function CustomClient(pipe) {
-            return pipe(function ctx(requestContext, next) {
-                Assert.equal('quest', requestContext.req);
-                next();
-            });
+        function CustomClient(pipe, config) {
         }
-        var factory = httpfy({}, CustomClient);
-        var client = factory.api(function pipe(callback) {
-            callback({
-                req: 'quest'
-            }, done);
-        });
 
-        client.get();
+        CustomClient.prototype.get = function get() {
+            done();
+        };
+
+        var client = Trooba.use(httpfy, CustomClient).build('client:default');
+
+        client.get({foo:'bar'});
     });
 
     it('should do request and expose runtime context', function (done) {
 
-        function factory() {
-            return httpfy(function (requestContext, reply) {
+        function transport(pipe) {
+            pipe.on('request', function (request) {
                 Assert.deepEqual({
                     foo: 'bar',
                     headers: {}
-                }, requestContext.request);
+                }, request);
 
-                reply(null, {
+                pipe.respond({
                     qaz: 'wer'
                 });
             });
         }
 
-        var client = Trooba.transport(factory).create();
+        var client = Trooba.use(transport).use(httpfy).build('client:default');
 
-        var ctx = client.request({
+        client.request({
             foo: 'bar'
         }).end(function (err, res) {
             Assert.deepEqual({qaz: 'wer'}, res);
             done();
         });
-
-        Assert.ok(ctx.request);
     });
 
     it('should allow request override', function (done) {
-        function factory() {
-            return httpfy(function (requestContext, reply) {
+        function transport(pipe) {
+            pipe.on('request', function (request) {
                 Assert.deepEqual({
                     foo: 'bar',
                     headers: {}
-                }, requestContext.request);
+                }, request);
 
-                reply(null, {
+                pipe.respond({
                     qaz: 'wer'
                 });
             });
         }
 
-        var client = Trooba.transport(factory).create();
+        var client = Trooba.use(transport).use(httpfy).build('client:default');
 
         function ExtRequest() {
             Request.apply(this, arguments);
@@ -101,21 +93,21 @@ describe(__filename, function () {
 
     it('should do get', function (done) {
 
-        function factory() {
-            return httpfy(function (requestContext, reply) {
+        function transport(pipe) {
+            pipe.on('request', function (request) {
                 Assert.deepEqual({
                     method: 'GET',
                     search: 'foo=bar',
                     headers: {}
-                }, requestContext.request);
+                }, request);
 
-                reply(null, {
+                pipe.respond( {
                     qaz: 'wer'
                 });
             });
         }
 
-        var client = Trooba.transport(factory).create();
+        var client = Trooba.use(transport).use(httpfy).build('client:default');
 
         client.get({
             foo: 'bar'
@@ -126,23 +118,23 @@ describe(__filename, function () {
     });
 
     it('should do put', function (done) {
-        function factory() {
-            return httpfy(function (requestContext, reply) {
+        function transport(pipe) {
+            pipe.on('request', function (request) {
                 Assert.deepEqual({
                     method: 'PUT',
                     body: {
                         foo: 'bar',
                     },
                     headers: {}
-                }, requestContext.request);
+                }, request);
 
-                reply(null, {
+                pipe.respond({
                     qaz: 'wer'
                 });
             });
         }
 
-        var client = Trooba.transport(factory).create();
+        var client = Trooba.use(transport).use(httpfy).build('client:default');
 
         client.put({
             foo: 'bar'
@@ -153,23 +145,23 @@ describe(__filename, function () {
     });
 
     it('should do patch', function (done) {
-        function factory() {
-            return httpfy(function (requestContext, reply) {
+        function transport(pipe) {
+            pipe.on('request', function (request) {
                 Assert.deepEqual({
                     method: 'PATCH',
                     body: {
                         foo: 'bar',
                     },
                     headers: {}
-                }, requestContext.request);
+                }, request);
 
-                reply(null, {
+                pipe.respond({
                     qaz: 'wer'
                 });
             });
         }
 
-        var client = Trooba.transport(factory).create();
+        var client = Trooba.use(transport).use(httpfy).build('client:default');
 
         client.patch({
             foo: 'bar'
@@ -180,21 +172,22 @@ describe(__filename, function () {
     });
 
     it('should do delete', function (done) {
-        function factory() {
-            return httpfy(function (requestContext, reply) {
+        function transport(pipe) {
+            pipe.on('request', function (request) {
                 Assert.deepEqual({
                     method: 'DELETE',
                     path: '/path/to/resource',
                     headers: {}
-                }, requestContext.request);
+                }, request);
 
-                reply(null, {
+                pipe.respond({
                     qaz: 'wer'
                 });
             });
+
         }
 
-        var client = Trooba.transport(factory).create();
+        var client = Trooba.use(transport).use(httpfy).build('client:default');
 
         client.delete('/path/to/resource').end(function (err, res) {
             Assert.deepEqual({qaz: 'wer'}, res);
@@ -203,8 +196,8 @@ describe(__filename, function () {
     });
 
     it('should do post, headers, path, mixing', function (done) {
-        function factory() {
-            return httpfy(function (requestContext, reply) {
+        function transport(pipe) {
+            pipe.on('request', function (request) {
                 Assert.deepEqual({
                     method: 'POST',
                     path: '/path/at/one',
@@ -218,15 +211,16 @@ describe(__filename, function () {
                         'h-foo': 'qaz',
                         'h-krv': 'vbn'
                     }
-                }, requestContext.request);
+                }, request);
 
-                reply(null, {
+                pipe.respond({
                     qaz: 'wer'
                 });
             });
+
         }
 
-        var client = Trooba.transport(factory).create();
+        var client = Trooba.use(transport).use(httpfy).build('client:default');
 
         client.post({
             'b-foo': 'azs'
@@ -248,8 +242,8 @@ describe(__filename, function () {
     });
 
     it('should do get, query object, headers, path, mixing', function (done) {
-        function factory() {
-            return httpfy(function (requestContext, reply) {
+        function transport(pipe) {
+            pipe.on('request', function (request) {
                 Assert.deepEqual({
                     method: 'GET',
                     path: '/path/at/one',
@@ -261,15 +255,16 @@ describe(__filename, function () {
                         'h-foo': 'qaz',
                         'h-krv': 'vbn'
                     }
-                }, requestContext.request);
+                }, request);
 
-                reply(null, {
+                pipe.respond({
                     qaz: 'wer'
                 });
             });
+
         }
 
-        var client = Trooba.transport(factory).create();
+        var client = Trooba.use(transport).use(httpfy).build('client:default');
 
         client.get({
             'b-foo': 'azs'
@@ -291,8 +286,8 @@ describe(__filename, function () {
     });
 
     it('should do get, query object, headers, path, mixing', function (done) {
-        function factory() {
-            return httpfy(function (requestContext, reply) {
+        function transport(pipe) {
+            pipe.on('request', function (request) {
                 Assert.deepEqual({
                     method: 'GET',
                     path: '/path/at/one',
@@ -304,15 +299,15 @@ describe(__filename, function () {
                         'h-foo': 'qaz',
                         'h-krv': 'vbn'
                     }
-                }, requestContext.request);
+                }, request);
 
-                reply(null, {
+                pipe.respond({
                     qaz: 'wer'
                 });
             });
         }
 
-        var client = Trooba.transport(factory).create();
+        var client = Trooba.use(transport).use(httpfy).build('client:default');
 
         client.get('b-foo=azs')
         .set('h-foo', 'qaz')
@@ -332,8 +327,8 @@ describe(__filename, function () {
     });
 
     it('should do get, query object, headers, path, mixing', function (done) {
-        function factory() {
-            return httpfy(function (requestContext, reply) {
+        function transport(pipe) {
+            pipe.on('request', function (request) {
                 Assert.deepEqual({
                     method: 'GET',
                     path: '/path/at/one',
@@ -345,15 +340,15 @@ describe(__filename, function () {
                         'h-krv': 'vbn',
                         'r-foo': 'bar'
                     }
-                }, requestContext.request);
+                }, request);
 
-                reply(null, {
+                pipe.respond({
                     qaz: 'wer'
                 });
             });
         }
 
-        var client = Trooba.transport(factory).create();
+        var client = Trooba.use(transport).use(httpfy).build('client:default');
 
         client.request({
             headers: {
