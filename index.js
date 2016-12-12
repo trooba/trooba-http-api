@@ -7,19 +7,18 @@ var colonTemplateSettings = {
     interpolate: /:(.+?)\b/g
 };
 
-module.exports = function httpfy(transport, Ctor) {
+module.exports = function httpfy(pipe, Ctor) {
     // allow extending client API
     Ctor = Ctor || Client;
 
-    transport.api = function api(pipe) {
+    pipe.set('client:default', function api(pipe) {
         return new Ctor(pipe);
-    };
-
-    return transport;
+    });
 };
 
-function Client(pipe) {
+function Client(pipe, config) {
     this.pipe = pipe;
+    this.config = config;
 }
 
 module.exports.Client = Client;
@@ -135,17 +134,15 @@ Request.prototype = {
     },
 
     end: function end(callback) {
-        var requestContext = {};
-        requestContext.request = this.request;
-        requestContext.request.headers = requestContext.request.headers || {};
+        var request = this.request;
+        request = request;
+        request.headers = request.headers || {};
 
         // stringify some headers
-        requestContext.request.headers =
-            Utils.stringifyHeaders(requestContext.request.headers);
+        request.headers =
+            Utils.stringifyHeaders(request.headers);
 
-        return this.pipe(requestContext, function onResponseContext(responseContext) {
-            callback(responseContext.error, responseContext.response);
-        });
+        return this.pipe.create().request(request, callback);
     }
 };
 
