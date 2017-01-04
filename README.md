@@ -43,7 +43,7 @@ module.exports = function transport(pipe, config) {
     });
 
     // inject api
-    pipe.set('client:http', httpfy);
+    pipe.set('client:default', httpfy);
 };
 ```
 
@@ -51,14 +51,14 @@ module.exports = function transport(pipe, config) {
 
 ```js
 var Trooba = require('trooba');
-var httpfy = require('trooba-http-api');
 
-var client = Trooba
+var client = new Trooba()
 .use(function someHandler() {})
 .use(function someHandler() {})
 .use(function someHandler() {})
-.use(httpfy)
-.build('client:default'); // since it injects default at ''client:default''
+.use('trooba-http-api')
+.build()
+.create('client:default'); // since it injects default at ''client:default''
 
 client.delete('path/to/resource').end(console.log);
 ```

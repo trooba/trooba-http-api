@@ -9,7 +9,7 @@ var Request = httpfy.Request;
 
 describe(__filename, function () {
     it('should inject api', function () {
-        var client = Trooba.use(httpfy).build('client:default');
+        var client = Trooba.use(httpfy).build().create('client:default');
         Assert.ok(client.get);
         Assert.ok(client.post);
         Assert.ok(client.put);
@@ -26,7 +26,7 @@ describe(__filename, function () {
             done();
         };
 
-        var client = Trooba.use(httpfy, CustomClient).build('client:default');
+        var client = Trooba.use(httpfy, CustomClient).build().create('client:default');
 
         client.get({foo:'bar'});
     });
@@ -46,7 +46,7 @@ describe(__filename, function () {
             });
         }
 
-        var client = Trooba.use(transport).use(httpfy).build('client:default');
+        var client = Trooba.use(transport).use(httpfy).build().create('client:default');
 
         client.request({
             foo: 'bar'
@@ -70,7 +70,7 @@ describe(__filename, function () {
             });
         }
 
-        var client = Trooba.use(transport).use(httpfy).build('client:default');
+        var client = Trooba.use(transport).use(httpfy).build().create('client:default');
 
         function ExtRequest() {
             Request.apply(this, arguments);
@@ -107,7 +107,7 @@ describe(__filename, function () {
             });
         }
 
-        var client = Trooba.use(transport).use(httpfy).build('client:default');
+        var client = Trooba.use(transport).use(httpfy).build().create('client:default');
 
         client.get({
             foo: 'bar'
@@ -134,7 +134,7 @@ describe(__filename, function () {
             });
         }
 
-        var client = Trooba.use(transport).use(httpfy).build('client:default');
+        var client = Trooba.use(transport).use(httpfy).build().create('client:default');
 
         client.put({
             foo: 'bar'
@@ -161,7 +161,7 @@ describe(__filename, function () {
             });
         }
 
-        var client = Trooba.use(transport).use(httpfy).build('client:default');
+        var client = Trooba.use(transport).use(httpfy).build().create('client:default');
 
         client.patch({
             foo: 'bar'
@@ -187,7 +187,7 @@ describe(__filename, function () {
 
         }
 
-        var client = Trooba.use(transport).use(httpfy).build('client:default');
+        var client = Trooba.use(transport).use(httpfy).build().create('client:default');
 
         client.delete('/path/to/resource').end(function (err, res) {
             Assert.deepEqual({qaz: 'wer'}, res);
@@ -220,7 +220,7 @@ describe(__filename, function () {
 
         }
 
-        var client = Trooba.use(transport).use(httpfy).build('client:default');
+        var client = Trooba.use(transport).use(httpfy).build().create('client:default');
 
         client.post({
             'b-foo': 'azs'
@@ -264,7 +264,7 @@ describe(__filename, function () {
 
         }
 
-        var client = Trooba.use(transport).use(httpfy).build('client:default');
+        var client = Trooba.use(transport).use(httpfy).build().create('client:default');
 
         client.get({
             'b-foo': 'azs'
@@ -307,7 +307,7 @@ describe(__filename, function () {
             });
         }
 
-        var client = Trooba.use(transport).use(httpfy).build('client:default');
+        var client = Trooba.use(transport).use(httpfy).build().create('client:default');
 
         client.get('b-foo=azs')
         .set('h-foo', 'qaz')
@@ -348,7 +348,7 @@ describe(__filename, function () {
             });
         }
 
-        var client = Trooba.use(transport).use(httpfy).build('client:default');
+        var client = Trooba.use(transport).use(httpfy).build().create('client:default');
 
         client.request({
             headers: {
