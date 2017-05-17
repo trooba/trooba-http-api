@@ -3,7 +3,7 @@
 [![codecov](https://codecov.io/gh/trooba/trooba-http-api/branch/master/graph/badge.svg)](https://codecov.io/gh/trooba/trooba-http-api)
 [![Build Status](https://travis-ci.org/trooba/trooba-http-api.svg?branch=master)](https://travis-ci.org/trooba/trooba-http-api) [![NPM](https://img.shields.io/npm/v/trooba-http-api.svg)](https://www.npmjs.com/package/trooba-http-api)
 [![Downloads](https://img.shields.io/npm/dm/trooba-http-api.svg)](http://npm-stat.com/charts.html?package=trooba-http-api)
-[![Known Vulnerabilities](https://snyk.io/test/github/trooba/trooba/badge.svg)](https://snyk.io/test/github/trooba/trooba-http-api)
+[![Known Vulnerabilities](https://snyk.io/test/github/trooba/trooba-http-api/badge.svg)](https://snyk.io/test/github/trooba/trooba-http-api)
 
 Provides a generic transport API to http/ajax/xhr trooba transports.
 
