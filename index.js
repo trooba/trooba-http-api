@@ -97,6 +97,7 @@ proto.delete = function _delete(path) {
 function Request(request, pipe) {
     this.request = request;
     this.pipe = pipe;
+    this.context = {};
 }
 
 module.exports.Request = Request;
@@ -142,7 +143,7 @@ Request.prototype = {
         request.headers =
             Utils.stringifyHeaders(request.headers);
 
-        return this.pipe.create().request(request, callback);
+        return this.pipe.create(this.context).request(request, callback);
     }
 };
 
