@@ -40,17 +40,26 @@ describe(__filename, function () {
                     headers: {}
                 }, request);
 
+                Assert.equal('wsx', pipe.context.qaz);
+                Assert.equal('zxc', pipe.context.asd);
+
                 pipe.respond({
                     qaz: 'wer'
                 });
             });
         }
 
-        var client = Trooba.use(transport).use(httpfy).build().create('client:default');
+        var client = Trooba.use(transport).use(httpfy).build().create({
+            qaz: 'wsx'
+        }, 'client:default');
 
-        client.request({
+        var request = client.request({
             foo: 'bar'
-        }).end(function (err, res) {
+        });
+
+        request.context.asd = 'zxc';
+
+        request.end(function (err, res) {
             Assert.deepEqual({qaz: 'wer'}, res);
             done();
         });
