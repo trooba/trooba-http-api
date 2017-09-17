@@ -1,5 +1,7 @@
 # trooba-http-api
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/trooba/trooba-http-api.svg)](https://greenkeeper.io/)
+
 [![codecov](https://codecov.io/gh/trooba/trooba-http-api/branch/master/graph/badge.svg)](https://codecov.io/gh/trooba/trooba-http-api)
 [![Build Status](https://travis-ci.org/trooba/trooba-http-api.svg?branch=master)](https://travis-ci.org/trooba/trooba-http-api) [![NPM](https://img.shields.io/npm/v/trooba-http-api.svg)](https://www.npmjs.com/package/trooba-http-api)
 [![Downloads](https://img.shields.io/npm/dm/trooba-http-api.svg)](http://npm-stat.com/charts.html?package=trooba-http-api)
