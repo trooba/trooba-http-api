@@ -19,11 +19,21 @@ module.exports = function httpfy(pipe, Ctor) {
 function Client(pipe, config) {
     this.pipe = pipe;
     this.config = config;
+    this.ctx = {};
 }
 
 module.exports.Client = Client;
 
 var proto = Client.prototype;
+
+/*
+ * Sets a new context
+ */
+proto.context = function (ctx) {
+    const newClient = new Client(this.pipe, this.config);
+    newClient.ctx = Object.assign({}, ctx);
+    return newClient;
+};
 
 /**
  * General request
@@ -32,7 +42,7 @@ var proto = Client.prototype;
 proto.request = function request(request, Ctor) {
     request.headers = request.headers || {};
     Ctor = Ctor || Request;
-    return new Ctor(request, this.pipe);
+    return new Ctor(request, this.pipe, this.ctx);
 };
 
 /**
@@ -94,10 +104,10 @@ proto.delete = function _delete(path) {
     });
 };
 
-function Request(request, pipe) {
+function Request(request, pipe, context) {
     this.request = request;
     this.pipe = pipe;
-    this.context = {};
+    this.context = context;
 }
 
 module.exports.Request = Request;
@@ -143,7 +153,7 @@ Request.prototype = {
         request.headers =
             Utils.stringifyHeaders(request.headers);
 
-        return this.pipe.create(this.context).request(request, callback);
+        return this.pipe.create(Object.assign({}, this.context)).request(request, callback);
     }
 };
 
