@@ -30,7 +30,7 @@ var proto = Client.prototype;
  * Sets a new context
  */
 proto.context = function (ctx) {
-    const newClient = new Client(this.pipe, this.config);
+    var newClient = new Client(this.pipe, this.config);
     newClient.ctx = Object.assign({}, ctx);
     return newClient;
 };
