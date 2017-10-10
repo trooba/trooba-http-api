@@ -1,5 +1,8 @@
 # ChangeLog
 
+## v2.0.3
+* Remove dependency on ES6 to support old browsers
+
 ## v2.0.2
 * Added context field to the request object to be added to the pipe context. This will allow plugin easier ways to inject into the context.
 * Increased code coverage
