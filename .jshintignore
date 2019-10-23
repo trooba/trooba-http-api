@@ -6,3 +6,4 @@ public/js
 **/*.marko.js
 **/*.dust.js
 test/static
+coverage

@@ -204,6 +204,37 @@ describe(__filename, function () {
         });
     });
 
+    it('should use plain path string', function (done) {
+        function transport(pipe) {
+            pipe.on('request', function (request) {
+                Assert.deepEqual({
+                    method: 'POST',
+                    path: '/path/to/resource',
+                    body: {
+                        'b-foo': 'azs'
+                    },
+                    headers: {}
+                }, request);
+
+                pipe.respond({
+                    qaz: 'wer'
+                });
+            });
+
+        }
+
+        var client = Trooba.use(transport).use(httpfy).build().create('client:default');
+
+        client.post({
+            'b-foo': 'azs'
+        })
+        .path('/path/to/resource')
+        .end(function (err, res) {
+            Assert.deepEqual({qaz: 'wer'}, res);
+            done();
+        });
+    });
+
     it('should do post, headers, path, mixing', function (done) {
         function transport(pipe) {
             pipe.on('request', function (request) {
