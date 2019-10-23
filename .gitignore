@@ -15,5 +15,5 @@ log
 *.dust.js
 project.sublime-workspace
 test/static
-coverage/*
+coverage
 yarn.lock
