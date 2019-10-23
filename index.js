@@ -1,7 +1,7 @@
 'use strict';
 
 var Queryparam = require('./lib/queryparam');
-var template = require('underscore').template;
+var template = require('underscore.template');
 
 var colonTemplateSettings = {
     interpolate: /:(.+?)\b/g
@@ -127,8 +127,7 @@ Request.prototype = {
         if (!pathParams) {
             this.request.path = pathValue;
         } else {
-            var createPath = template(pathValue, colonTemplateSettings);
-            this.request.path = createPath(pathParams);
+            this.request.path = template(pathValue, pathParams, colonTemplateSettings);
         }
         return this;
     },

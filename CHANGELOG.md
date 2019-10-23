@@ -1,5 +1,8 @@
 # ChangeLog
 
+## v2.1.0
+* Switched from underscore to underscore.template
+
 ## v2.0.3
 * Remove dependency on ES6 to support old browsers
 
