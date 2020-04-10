@@ -31,7 +31,7 @@
     "trooba": "^2"
   },
   "dependencies": {
-    "underscore.template": "^0.1.7"
+    "lodash.template": "^4.5.0"
   },
   "publishConfig": {
     "registry": "http://registry.npmjs.org"

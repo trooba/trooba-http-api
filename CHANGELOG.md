@@ -1,5 +1,8 @@
 # ChangeLog
 
+## v2.1.1
+* Replaced underscore.template with lodash.template
+
 ## v2.1.0
 * Switched from underscore to underscore.template
 
